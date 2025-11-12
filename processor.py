@@ -132,7 +132,7 @@ def analyze1(df , product_description):
     top_cons = top_k(cons_agg)
 
     # ---------- relevance filtering (Option 2: word in product description) ----------
-    def filter_relevant_words_fuzzy(phrases, product_description, cutoff=0.6):
+    def filter_relevant_words_fuzzy(phrases, product_description, cutoff=0.5):
         relevant = []
         desc_words = set(clean_text(product_description).split())
         for word, score in phrases:
@@ -143,6 +143,16 @@ def analyze1(df , product_description):
 
     top_pros = filter_relevant_words_fuzzy(top_pros, product_description)
     top_cons = filter_relevant_words_fuzzy(top_cons, product_description)
+
+    #-----------legit words-----------------
+    import nltk
+    nltk.download('words', quiet=True)
+    from nltk.corpus import words
+
+    english_words = set(words.words())
+    print(f"Total valid English words: {len(english_words)}")
+    top_pros = [(w, s) for w, s in top_pros if w in english_words]
+    top_cons = [(w, s) for w, s in top_cons if w in english_words]
 
 
     # ---------- scoring system ----------
